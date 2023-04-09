@@ -1,0 +1,22 @@
+[tool.poetry]
+name = "hello-langchain"
+version = "0.1.0"
+description = ""
+authors = ["Eduardo Ballesteros <eduardo.ballesterosg@outlook.com>"]
+readme = "README.md"
+packages = [{include = "hello_langchain"}]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+langchain = "^0.0.135"
+huggingface-hub = "^0.13.4"
+python-dotenv = "^1.0.0"
+google-search-results = "^2.4.2"
+
+
+[tool.poetry.group.dev.dependencies]
+ipykernel = "^6.22.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
