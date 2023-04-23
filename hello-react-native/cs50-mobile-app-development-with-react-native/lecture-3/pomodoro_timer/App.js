@@ -1,31 +1,32 @@
-import { Button, StyleSheet, View } from 'react-native';
+import { Button, StyleSheet, Text, View } from 'react-native';
 import { CountDown } from './CountDown.js'
-import { Component } from 'react';
+import React, { Component } from 'react';
 import {vibrate} from './utils'
 
 
-// This works, but I am not too happy about how I am handling
-// toggling/resting the countDowns. Every time I want to do 
-// either of those, I modify App.state.countId so the countDown key changes,
-// making sure the countDown component is unmounted and a new one is instantiated
+// this version uses React.createRef to enable
+// resetCountDown to call CountDown.resetState
 class App extends Component {
   state = {
     working: true,
     isRunning: true,
-    countId: 0
+  }
+
+  countDownRef = React.createRef()
+
+  resetCountDown = () => {
+    this.countDownRef.current.resetState()
   }
 
   toggleCountDowns = () => {
     this.setState(prevState => (
       {
         working: !prevState.working,
-        countId: prevState.countId + 1
       }
     ))
-  }
-
-  resetCountDown = () => {
-    this.setState(prevState => ({countId: prevState.countId + 1}))
+    // No need since the above change causes a startTime change which causes
+    // CountDown.componentDidUpdate to reset the timer
+    // this.resetCountDown()
   }
 
   onCountdownFinish = () => {
@@ -43,7 +44,8 @@ class App extends Component {
     
     return (
       <View style={styles.container}>
-        <CountDown key={this.state.countId} message={message} startTime={startTime} onFinish={this.onCountdownFinish} isRunning={this.state.isRunning} />
+        <Text style={styles.text}> {message} </Text>
+        <CountDown ref={this.countDownRef} startTime={startTime} onFinish={this.onCountdownFinish} isRunning={this.state.isRunning} />
         <View>
           <Button onPress={this.toggleRunningState} title='start/stop' />
           <Button onPress={this.resetCountDown} title='reset' />
@@ -63,4 +65,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  // I don't love the fact that I have 2 different styles
+  // (one here and one in CountDown) for text.
+  // But it doesn't bother me enough to fix it. 
+  text: {fontSize: 50}
 });

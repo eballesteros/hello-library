@@ -6,12 +6,12 @@ const styles = StyleSheet.create({
     text: {fontSize: 50}
 })
 
+// This isn't the cleanest API
 class CountDown extends Component {
     static propTypes = {
-        startTime: PropTypes.number.isRequired,
-        message: PropTypes.string.isRequired,
-        onFinish: PropTypes.func.isRequired,
-        isRunning: PropTypes.bool.isRequired
+        startTime: PropTypes.number.isRequired, // initial time on countDown clock
+        onFinish: PropTypes.func.isRequired,    // function triggered when the count hits 0
+        isRunning: PropTypes.bool.isRequired    // is it counting?
     }
 
     constructor(props) {
@@ -21,9 +21,9 @@ class CountDown extends Component {
         }
     }
 
-    // componentWillReceiveProps(nextProps) {
-    //     this.setState({remainingSeconds: props.startTime * 60,})
-    // }
+    resetState = () => {
+        this.setState({remainingSeconds: this.props.startTime * 60})
+    }
 
     decrease = () => {
         if (this.props.isRunning) {
@@ -32,19 +32,21 @@ class CountDown extends Component {
     }
 
     componentDidMount() {
+        // intentionally making it go 10x faster
         this.interval = setInterval(this.decrease, 100)
     }
 
-    // shouldComponentUpdate(_, nextState) {
-    //     return nextState.remainingSeconds >= 0
-    // }
-
-    componentDidUpdate(_, prevState) {
+    // since componentWillReceiveProps is deprecated, we can use componentDidUpdate
+    // to check if the props have changed so we can update the state
+    componentDidUpdate(prevProps, prevState) {
         if (prevState.remainingSeconds == 1) {
             this.props.onFinish()
         }
-    }
 
+        if (prevProps.startTime != this.props.startTime) {
+            this.setState({remainingSeconds: this.props.startTime * 60})
+        }
+    }
 
     componentWillUnmount() {
         clearInterval(this.interval)
@@ -55,7 +57,7 @@ class CountDown extends Component {
         const displayMinutes = Math.floor(this.state.remainingSeconds/60)
         return (
             <Text style={styles.text}>
-                {this.props.message}: {displayMinutes}:{displaySeconds.toString().padStart(2, '0')}
+                {displayMinutes}:{displaySeconds.toString().padStart(2, '0')}
             </Text>
         )
     }
