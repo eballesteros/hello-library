@@ -1,0 +1,9 @@
+{
+  "main": "node_modules/expo/AppEntry.js",
+  "private": true,
+  "dependencies": {
+    "expo": "^47.0.0",
+    "react": "18.1.0",
+    "react-native": "0.70.8"
+  }
+}
