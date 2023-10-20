@@ -1,0 +1,55 @@
+def pox(base: Int, exp: Int = 2) -> Int:
+    return base ** exp
+
+# inout allows murating the variable
+# borrowed (default) does not
+def add(inout x: Int, borrowed y: Int) -> Int:
+    x += 1
+    return x + y 
+
+fn do_math():
+    var x : Int = 1 # mutable
+    let y = 2 # inmutable, type inferred
+    
+    try:
+        print(add(x, y))
+    except:
+        pass
+    print(x)
+    print(y)
+
+
+# provides full ownership of the value
+# so in can be modified inside without affecting outside
+fn set_fire(owned text: String) -> String:
+    text += "🔥"
+    return text
+
+# Currently, Mojo always makes a copy when a function returns a value.
+
+
+struct MyPair:
+    # unlike python classes, you need to specify fields here
+    # regadrlees of whether they are passed from the outside 
+    # or computed at __init__ time
+    var first: Int
+    var second: Int
+    var third: Int
+
+    fn __init__(inout self, first: Int, second: Int):
+        self.first = first
+        self.second = second
+        self.third = self.first + self.second
+    
+    fn dump(self):
+        print(self.first, self.second, self.third)
+
+fn main():
+    let a: String = "mojo"
+    let b = set_fire(a) # this coppies a
+    # let b = set_fire(a^) # this transfers a, destroying it in local context
+    print(a) # therefore this would error out if we transfered 
+    print(b)
+
+    let mine = MyPair(2, 4)
+    mine.dump()
